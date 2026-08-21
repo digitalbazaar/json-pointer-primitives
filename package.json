@@ -1,0 +1,45 @@
+{
+  "name": "@digitalbazaar/json-pointer-primitives",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Match an object against a map of JSON pointers to expected values.",
+  "exports": "./lib/index.js",
+  "files": [
+    "lib/*"
+  ],
+  "scripts": {
+    "lint": "eslint",
+    "test": "vitest run",
+    "watch": "vitest"
+  },
+  "dependencies": {
+    "json-pointer": "^0.6.2"
+  },
+  "devDependencies": {
+    "@digitalbazaar/eslint-config": "^7.0.0",
+    "eslint": "^9.38.0",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "json pointer",
+    "match",
+    "query"
+  ],
+  "author": {
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "https://digitalbazaar.com"
+  },
+  "license": "LicenseRef-LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalbazaar/json-pointer-primitives"
+  },
+  "bugs": {
+    "url": "https://github.com/digitalbazaar/json-pointer-primitives/issues"
+  },
+  "homepage": "https://github.com/digitalbazaar/json-pointer-primitives"
+}
