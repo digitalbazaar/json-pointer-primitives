@@ -203,14 +203,14 @@ describe('asserting a value type', () => {
       .toThrow(/credentialQuery/);
   });
 
-  // `optional` changes the message and nothing else — `undefined` is accepted
-  // either way, so `optional = false` does not make a parameter required.
-  // Pinned as it stands, not as it reads: see the finding on lib/util.js:6.
-  it.each([
-    ['not marked optional', false],
-    ['marked optional', true]
-  ])('accepts undefined when %s', (_label, optional) => {
-    expect(() => assert(undefined, 'name', Map, optional)).not.toThrow();
+  describe('a missing value', () => {
+    it('is refused when the parameter is not optional', () => {
+      expect(() => assert(undefined, 'name', Map)).toThrow(/required/);
+    });
+
+    it('is accepted when the parameter is optional', () => {
+      expect(() => assert(undefined, 'name', Map, true)).not.toThrow();
+    });
   });
 
   it('prefixes the message only when marked optional', () => {
