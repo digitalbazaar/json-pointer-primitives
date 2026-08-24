@@ -10,14 +10,19 @@
   "scripts": {
     "lint": "eslint",
     "test": "vitest run",
-    "watch": "vitest"
+    "watch": "vitest",
+    "test-node": "vitest run --project node",
+    "test-browser": "vitest run --project browser"
   },
   "dependencies": {
     "json-pointer": "^0.6.2"
   },
   "devDependencies": {
     "@digitalbazaar/eslint-config": "^7.0.0",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
     "eslint": "^9.38.0",
+    "playwright": "^1.62.1",
     "vitest": "^4.1.10"
   },
   "engines": {
