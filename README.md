@@ -47,10 +47,9 @@ new Map(Object.entries({'/renderSuite': 'html', '/template/mediaType': 'text/htm
 
 ## Why this is its own package
 
-It does not know what it is matching, and that is the point. It was extracted
-from [`vc-query`](https://github.com/digitalbazaar/vc-query), where the same
-function was called `credentialMatches` — but the matcher never looked at a
-credential, only at an object and a map.
+It does not know what it is matching, and that is the point. The function it
+was extracted from was called `credentialMatches`, but the matcher never
+looked at a credential, only at an object and a map.
 
 Two libraries need it, at two stages of the same flow. A wallet matches its
 credentials against a verifier's request to decide *which credentials* to

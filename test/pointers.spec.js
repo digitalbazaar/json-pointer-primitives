@@ -7,19 +7,13 @@ import {
 } from '../lib/index.js';
 import {describe, expect, it} from 'vitest';
 
-// These pin the pointer behaviour this package inherits from `json-pointer`.
-// Nothing above the dependency enforces it, so a bump could change any of it
-// silently; that is what these tests are for.
-//
-// One limit worth stating: `resolvePointer` catches every error and returns
-// `undefined` (lib/util.js:36), so what is pinned there is its own output
-// contract, not the dependency's. A bump that starts throwing where it used
-// to return `undefined` would keep these green. The map-building tests have
-// no such catch, so those do pin the dependency directly.
+// Pins the pointer behaviour inherited from `json-pointer`, which nothing
+// above the dependency enforces. `resolvePointer` catches every error, so
+// there only its own output contract is pinned, not the dependency's.
 
 describe('resolving a pointer', () => {
-  // RFC 6901: `-` names the element after the last one. It exists so JSON
-  // Patch can append, and must never resolve to a value on a read.
+  // RFC 6901: `-` names the element after the last one, so it must never
+  // resolve to a value on a read.
   describe('the `-` token', () => {
     it('resolves to nothing on an array', () => {
       expect(resolvePointer({foo: ['a', 'b']}, '/foo/-')).toBeUndefined();
@@ -32,7 +26,7 @@ describe('resolving a pointer', () => {
   });
 
   describe('escaping', () => {
-    // `~1` must be decoded before `~0`, or `~01` wrongly yields `/`
+    // `~1` decodes before `~0`, or `~01` wrongly yields `/`
     it.each([
       ['/m~0n', {'m~n': 'tilde'}, 'tilde'],
       ['/a~1b', {'a/b': 'slash'}, 'slash'],
@@ -57,19 +51,17 @@ describe('resolving a pointer', () => {
     });
   });
 
-  // The bug fixed in bedrock-vue-wallet #155: a missing segment must abandon
-  // the whole pointer, not fall back to the document root and keep walking.
-  // The root must carry a value for the remaining token, or an implementation
-  // that re-roots and one that abandons are indistinguishable.
+  // A missing segment must abandon the whole pointer, not fall back to the
+  // root and keep walking. The root has to carry a value for the remaining
+  // token, or the two behaviours are indistinguishable.
   it('resolves to nothing when a segment is missing', () => {
     const doc = {b: 'a value the root would supply', a: {}};
     expect(resolvePointer(doc, '/absent/b')).toBeUndefined();
   });
 
-  // A deliberate departure from RFC 6901, relied on across vc-query: there,
-  // `""` is the whole document and `"/"` is the value under the empty-string
-  // key. Here both mean the whole document, so an empty-string key cannot be
-  // addressed. Pinned because it is a convention, not an oversight.
+  // A deliberate departure from RFC 6901, where `""` is the whole document
+  // and `"/"` is the value under the empty-string key. Here both mean the
+  // whole document, so an empty-string key cannot be addressed.
   describe('the root pointer convention', () => {
     const DOC = {'': 'under the empty key', a: 1};
 
@@ -120,8 +112,7 @@ describe('building a pointer map from an object', () => {
     expect([...map.keys()]).toEqual(['/m~0n', '/a~1b']);
   });
 
-  // Presence is not enough: `_isWildcard` keys off size, so the container has
-  // to arrive empty or every wildcard match against one breaks.
+  // `_isWildcard` keys off size, so the container has to arrive empty.
   it.each([
     ['an empty array', 'tags', new Set()],
     ['an empty object', 'empty', new Map()]
@@ -153,9 +144,8 @@ describe('rebuilding an object from a pointer map', () => {
     expect(fromJsonPointerMap({map})).toEqual({whole: 'document'});
   });
 
-  // Container type is inferred from the *next* token's shape. vc-query's
-  // dcql.js depends on this: it compiles DCQL's `null` ("any array index")
-  // to the literal token `0` precisely so an array is rebuilt here.
+  // Container type is inferred from the next token's shape. A caller that
+  // compiles "any array index" to the literal token `0` depends on this.
   describe('inferring a container from the next token', () => {
     it('builds an array from a numeric token', () => {
       const map = new Map([['/a/0', 'x'], ['/a/1', 'y']]);
@@ -172,8 +162,7 @@ describe('rebuilding an object from a pointer map', () => {
         .toEqual({a: {b: 'x'}});
     });
 
-    // The consequence: an object keyed by numeric strings does not survive
-    // the trip. Unreachable from DCQL, which never emits such keys.
+    // Consequence: an object keyed by numeric strings does not survive.
     it('cannot rebuild an object whose keys are numeric strings', () => {
       const map = toJsonPointerMap({obj: {a: {0: 'x'}}, flat: true});
       expect(fromJsonPointerMap({map})).toEqual({a: ['x']});

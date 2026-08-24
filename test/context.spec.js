@@ -6,10 +6,8 @@ import {
   fromJsonPointerMap, matches, toJsonPointerMap
 } from '../lib/index.js';
 
-// `@context` is the one ordered array in a credential — later entries override
-// earlier ones, so expressing it as a `Set` loses the thing that makes it mean
-// anything. Every other array is a bag of candidates.
-// Ported from oid4-client 1654f43, "Fix `@context` matching" (v5.13.2).
+// `@context` is ordered: later entries override earlier ones. Every other
+// array is an unordered bag of candidates.
 
 const V2 = 'https://www.w3.org/ns/credentials/v2';
 const EXAMPLES = 'https://www.w3.org/ns/credentials/examples/v2';
@@ -45,7 +43,6 @@ describe('matching an ordered @context', () => {
     })).toBe(true);
   });
 
-  // the whole point: a `Set` would have called this a match
   it('does not match when the same entries are reordered', () => {
     expect(matches({
       object: CREDENTIAL, map: asMap({'@context': [EXAMPLES, V2]})
