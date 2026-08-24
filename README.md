@@ -22,7 +22,7 @@ matches({
 |---|---|
 | every entry | all must match — conjunction |
 | a `Set` value | any member may match — alternation nested inside conjunction |
-| `''`, empty `Map`, empty `Set` | wildcard: any value, but the pointer must resolve |
+| empty `Map`, empty `Set`, `''` | wildcard: any value, but the pointer must resolve |
 | a pointer resolving to an array | matches if any element matches |
 | a numeric string vs a number | equal by default; `{coerceNumbers: false}` to disable |
 
