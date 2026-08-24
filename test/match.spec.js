@@ -84,13 +84,23 @@ describe('matching an object against a pointer map', () => {
   });
 
   describe('wildcards', () => {
+    // an empty Map is what `{}` in an example becomes -- the preferred form.
+    // The empty string is QueryByExample's `"firstName": ""` convention.
     it.each([
-      ['an empty string', ''],
       ['an empty Map', new Map()],
-      ['an empty Set', new Set()]
+      ['an empty Set', new Set()],
+      ['an empty string', '']
     ])('treats %s as "any value at this pointer"', (_label, wildcard) => {
       const map = new Map([['/credentialSubject/name', wildcard]]);
       expect(matches({object: CREDENTIAL, map})).toBe(true);
+    });
+
+    it('cannot tell "any value" from "the empty string"', () => {
+      const map = new Map([['/credentialSubject/seat', '']]);
+      expect(matches({object: CREDENTIAL, map})).toBe(true);
+      expect(matches({
+        object: {credentialSubject: {seat: ''}}, map
+      })).toBe(true);
     });
 
     it('still requires the pointer to resolve', () => {
