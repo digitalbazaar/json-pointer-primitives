@@ -12,16 +12,19 @@
     "test": "vitest run",
     "watch": "vitest",
     "test-node": "vitest run --project node",
-    "test-browser": "vitest run --project browser"
+    "test-browser": "vitest run --project browser",
+    "coverage": "vitest run --coverage",
+    "coverage-ci": "vitest run --coverage --coverage.reporter=lcovonly --coverage.reporter=text-summary --coverage.reporter=text"
   },
   "dependencies": {
     "json-pointer": "^0.6.2"
   },
   "devDependencies": {
-    "@digitalbazaar/eslint-config": "^7.0.0",
+    "@digitalbazaar/eslint-config": "^9.0.0",
     "@vitest/browser": "^4.1.11",
     "@vitest/browser-playwright": "^4.1.11",
-    "eslint": "^9.38.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^10.9.1",
     "playwright": "^1.62.1",
     "vitest": "^4.1.10"
   },

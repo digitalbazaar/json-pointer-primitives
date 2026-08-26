@@ -8,6 +8,13 @@ import {playwright} from '@vitest/browser-playwright';
 // spec that passes in one and fails in the other is a real portability bug.
 export default defineConfig({
   test: {
+    // `coverage` is process-wide: it can only be set at the root, never inside
+    // a project, and applies across every project in the run
+    coverage: {
+      provider: 'v8',
+      reporter: ['lcov', 'text-summary', 'text'],
+      include: ['lib/**/*.js']
+    },
     projects: [
       {
         test: {
