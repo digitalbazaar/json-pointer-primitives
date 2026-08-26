@@ -5,3 +5,12 @@ reports
 .cache
 scratchpad/
 *.log
+*.tgz
+.eslintcache
+.vscode
+.project
+.settings
+TAGS
+*~
+*.sw[nop]
+.DS_Store

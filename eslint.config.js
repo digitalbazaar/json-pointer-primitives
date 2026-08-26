@@ -1,8 +1,9 @@
 /*!
- * Copyright (c) 2026 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2026 Digital Bazaar, Inc.
  */
-import nodeConfig from '@digitalbazaar/eslint-config/node-recommended';
+import universalConfig
+  from '@digitalbazaar/eslint-config/universal-recommended';
 
 export default [
-  ...nodeConfig
+  ...universalConfig
 ];
