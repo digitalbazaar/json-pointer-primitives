@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2026 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2026 Digital Bazaar, Inc.
  */
 import {describe, expect, it} from 'vitest';
 import {matches, toJsonPointerMap} from '../lib/index.js';

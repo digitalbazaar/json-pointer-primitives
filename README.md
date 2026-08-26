@@ -4,8 +4,10 @@ Building blocks for matching objects against JSON pointers: convert a nested
 object into a map of pointers to values, resolve a pointer, and test whether an
 object satisfies such a map.
 
+It does not know what it is matching. Give it any object and any map.
+
 ```js
-import {matches, toJsonPointerMap} from '@digitalbazaar/json-pointer-primitives';
+import {matches} from '@digitalbazaar/json-pointer-primitives';
 
 matches({
   object: credential,
@@ -14,19 +16,67 @@ matches({
     ['/issuer/id', 'did:example:issuer']
   ])
 });
+// true — every entry matched
 ```
+
+One runtime dependency, `json-pointer`. Runs on node and in a browser.
 
 ## Semantics
 
-| in the map | means |
-|---|---|
-| every entry | all must match — conjunction |
-| a `Set` value | any member may match — alternation nested inside conjunction |
-| empty `Map`, empty `Set`, `''` | wildcard: any value, but the pointer must resolve |
-| a pointer resolving to an array | matches if any element matches |
-| a numeric string vs a number | equal by default; `{coerceNumbers: false}` to disable |
+Every entry in the map must match, so entries are a conjunction:
 
-A pointer that resolves to nothing never matches.
+```js
+const credential = {
+  type: ['VerifiableCredential', 'MovieTicketCredential'],
+  issuer: {id: 'did:example:issuer'},
+  credentialSubject: {seat: 'A1', row: 12}
+};
+
+matches({object: credential, map: new Map([
+  ['/issuer/id', 'did:example:issuer'],
+  ['/credentialSubject/seat', 'A1']
+])});                                              // true
+
+matches({object: credential, map: new Map([
+  ['/issuer/id', 'did:example:issuer'],
+  ['/credentialSubject/seat', 'B2']
+])});                                              // false — one entry failed
+```
+
+A `Set` value is an alternation, nested inside that conjunction — any member
+may match:
+
+```js
+new Map([['/credentialSubject/seat', new Set(['A1', 'B2'])]]);   // either seat
+```
+
+A pointer that resolves to an array matches if any element does:
+
+```js
+new Map([['/type', 'MovieTicketCredential']]);     // true — one of two types
+```
+
+An empty `Map` is a wildcard: any value, so long as the pointer resolves. An
+empty `Set` and `''` mean the same; prefer the empty `Map`, which is what `{}`
+in an example becomes.
+
+```js
+new Map([['/issuer/id', new Map()]]);              // true  — an issuer id exists
+new Map([['/absent', new Map()]]);                 // false — nothing there
+```
+
+A numeric string and a number compare equal by default:
+
+```js
+new Map([['/credentialSubject/row', '12']]);       // true
+matches({object: credential, map, options: {coerceNumbers: false}});  // false
+```
+
+`@context` is the exception to array handling: it stays ordered, and each
+element must equal the element at the same index. The object may carry more.
+
+A pointer that resolves to nothing never matches. Pointers read own properties
+only, so `/constructor` and `/toString` resolve to nothing.
 
 ## Building a map
 
@@ -40,30 +90,18 @@ toJsonPointerMap({obj: {credentialSubject: {name: 'John Doe'}}});
 or by hand, from flat pointers:
 
 ```js
-new Map(Object.entries({'/renderSuite': 'html', '/template/mediaType': 'text/html'}));
+new Map([
+  ['/renderSuite', 'html'],
+  ['/template/mediaType', 'text/html']
+]);
 ```
 
-`fromJsonPointerMap({map})` is the inverse.
+`fromJsonPointerMap({map})` rebuilds an object from a map.
 
-## Why this is its own package
-
-It does not know what it is matching, and that is the point. The function it
-was extracted from was called `credentialMatches`, but the matcher never
-looked at a credential, only at an object and a map.
-
-Two libraries need it, at two stages of the same flow. A wallet matches its
-credentials against a verifier's request to decide *which credentials* to
-present, then matches each credential's render methods against what it can
-display to decide *how to show them*. QueryByExample, DCQL and Presentation
-Exchange all normalise into the same pointer map, so the first stage already
-had this logic; the second stage would otherwise have written it again.
-
-Two copies in one pipeline is the failure worth avoiding. A divergence in how a
-wildcard behaves, or whether numbers coerce, would mean a credential selected
-under one set of rules and its rendering selected under another, with nothing
-to make the difference visible.
-
-One runtime dependency, `json-pointer`.
+```js
+resolvePointer({issuer: {id: 'did:example:issuer'}}, '/issuer/id');
+// 'did:example:issuer'
+```
 
 ## License
 

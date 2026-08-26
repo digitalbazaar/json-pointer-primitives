@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2026 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2026 Digital Bazaar, Inc.
  */
 import {defineConfig} from 'vitest/config';
 import {playwright} from '@vitest/browser-playwright';

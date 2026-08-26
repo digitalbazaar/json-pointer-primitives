@@ -38,7 +38,7 @@
     "email": "support@digitalbazaar.com",
     "url": "https://digitalbazaar.com"
   },
-  "license": "LicenseRef-LICENSE.md",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/digitalbazaar/json-pointer-primitives"
