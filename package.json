@@ -1,6 +1,6 @@
 {
   "name": "@digitalbazaar/json-pointer-primitives",
-  "version": "1.0.0",
+  "version": "1.0.1-0",
   "type": "module",
   "description": "Match an object against a map of JSON pointers to expected values.",
   "exports": "./lib/index.js",
