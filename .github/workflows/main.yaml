@@ -2,11 +2,7 @@ name: Main CI
 
 on: [push]
 
-# `contents: read` rather than `{}`: checkout needs it to clone a private
-# repository, and an empty block grants nothing at all. Public repos clone
-# without a token, which is why this is easy to miss when copying a workflow.
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   lint:
